@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sy.mapper.CarMapper">
+    <sql id="carColumns">
+        id,`name`,mileage,price,publishdate,typeid,carimage
+    </sql>
+    <select id="getNewCars" resultType="Car">
+        select <include refid="carColumns"/> from t_car order by publishdate desc limit 10
+    </select>
+    <select id="getAllNewCars" resultType="Car">
+        select <include refid="carColumns"/> from t_car order by publishdate desc
+    </select>
+</mapper>

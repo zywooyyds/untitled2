@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sy.mapper.CompareMapper">
+    <select id="getCompareByCarId" parameterType="int" resultType="Compare">
+        select id,userid,carid from t_compare where userid=1 and carid=#{carid}
+    </select>
+    <insert id="addCompare" parameterType="int">
+        insert into t_compare(userid,carid) values(1,#{carid})
+    </insert>
+    <select id="getCompareInfo" resultType="CompareDto">
+        select c.id,c.name,c.mileage,c.price,c.publishdate from t_car c,t_compare t where c.id=t.carid and t.userid=1
+    </select>
+    <delete id="deleteCompare" parameterType="int">
+        delete from t_compare where userid=1 and carid=#{carid}
+    </delete>
+</mapper>

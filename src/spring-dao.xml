@@ -1,0 +1,68 @@
+﻿<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:component-scan base-package="com.sy"/>
+
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="ds" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${druid.driver}"></property>
+        <property name="url" value="${druid.url}"></property>
+        <property name="username" value="${druid.user}"></property>
+        <property name="password" value="${druid.pwd}"></property>
+    </bean>
+
+
+    <!--
+        这个Bean对象相当于原来的SqlSessionFactory对象，此时通过这个对象就可以有
+        Spring去管理SqlSessionFactory以及SqlSession对象，此时可以向之前一样
+        在这个bean对象中配置当前SqlSessionFactory创建的时候所需的一些参数
+    -->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--替代settings节点-->
+        <property name="configurationProperties">
+            <props>
+                <prop key="logImpl">LOG4J</prop>
+                <prop key="mapUnderscoreToCamelCase">true</prop>
+            </props>
+        </property>
+        <!--替代typeAliases节点-->
+        <property name="typeAliasesPackage" value="com.sy.entity,com.sy.dto,com.sy.vo"></property>
+        <!--替代plugins节点-->
+        <property name="plugins">
+            <list>
+                <bean class="com.github.pagehelper.PageHelper">
+                    <property name="properties">
+                        <props>
+                            <prop key="dialect">mysql</prop>
+                        </props>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        <!--替代environments-->
+        <property name="dataSource" ref="ds"></property>
+        <!--开启对所有Mapper.xml文件的扫描-->
+        <property name="mapperLocations" value="classpath:mappers/*.xml"></property>
+    </bean>
+
+    <!--
+        会自动扫描所有的Mapper接口并生成对应的动态代理对象，并且将动态代理对象直接通过Spring管理
+        这样Spring中就可以注入并使用这些Mapper层对象了
+    -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sessionFactory"></property>
+        <!--要扫描的那些Mapper接口所在的位置-->
+        <property name="basePackage" value="com.sy.mapper"></property>
+    </bean>
+</beans>

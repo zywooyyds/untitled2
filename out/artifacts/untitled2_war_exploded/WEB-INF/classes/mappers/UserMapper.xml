@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace：命名空间，对于多个Mapper.xml文件而言，这个值应该是一个唯一的值
+-->
+<mapper namespace="com.sy.mapper.UserMapper">
+    <!--定义语句
+        例：根据Id查询部门信息
+        select标签-定义一个查询操作
+            id-语句对象的唯一标识，在同一个Mapper文件中不能重复
+            parameterType-占位符参数的入参类型
+            resultType-查询出来的结果要封装出来的Java对象的类型
+    -->
+
+    <select id="getUser" parameterType="string" resultType="user">
+        select * from t_user where name=#{name}
+    </select>
+    <insert id="addUser" parameterType="User">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user(name,pwd) values(#{name},#{pwd})
+    </insert>
+
+
+</mapper>
